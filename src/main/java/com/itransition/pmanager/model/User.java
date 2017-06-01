@@ -3,10 +3,7 @@ package com.itransition.pmanager.model;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,6 +22,8 @@ public class User implements UserDetails{
     private String lastName;
     private boolean  enabled;
     private String avatar;
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Project> projects;
 
     private List<Role> authorities;
 
