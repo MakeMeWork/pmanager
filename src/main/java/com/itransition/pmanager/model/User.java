@@ -11,12 +11,13 @@ import java.util.List;
  * Created by Lenovo on 01.06.2017.
  */
 @Entity
-public class User implements UserDetails{
+public class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String username;
+    private String email;
     private String password;
     private String firstName;
     private String lastName;
@@ -25,9 +26,13 @@ public class User implements UserDetails{
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Project> projects;
 
-    private List<Role> authorities;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-    @Override
+    public long getId() {
+        return id;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -36,7 +41,14 @@ public class User implements UserDetails{
         this.username = username;
     }
 
-    @Override
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -61,7 +73,6 @@ public class User implements UserDetails{
         this.lastName = lastName;
     }
 
-    @Override
     public boolean isEnabled() {
         return enabled;
     }
@@ -78,28 +89,12 @@ public class User implements UserDetails{
         this.avatar = avatar;
     }
 
-    @Override
-    public List<Role> getAuthorities() {
-        return authorities;
+    public Role getRole() {
+        return role;
     }
 
-    public void setAuthorities(List<Role> authorities) {
-        this.authorities = authorities;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return false;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return false;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
 
