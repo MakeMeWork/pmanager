@@ -1,11 +1,18 @@
 package com.itransition.pmanager.model;
 
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.List;
+
+import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.enabled;
 
 /**
  * Created by Lenovo on 01.06.2017.
@@ -13,15 +20,33 @@ import java.util.List;
 @Entity
 public class User{
 
+    public User() {
+    }
+
+    public User(String username, String email, String password, String firstName, String lastName) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.role = Role.ROLE_USER;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    @NotEmpty
+    @Size(min = 4, max = 12)
     private String username;
+    @Email
+    @NotEmpty
     private String email;
+    @NotEmpty
+    @Size(min = 6)
     private String password;
     private String firstName;
     private String lastName;
-    private boolean  enabled;
+    private boolean verify;
     private String avatar;
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Project> projects;
@@ -73,12 +98,12 @@ public class User{
         this.lastName = lastName;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public boolean isVerify() {
+        return verify;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setVerify(boolean verify) {
+        this.verify = verify;
     }
 
     public String getAvatar() {

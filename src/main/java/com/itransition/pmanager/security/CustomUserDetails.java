@@ -18,7 +18,6 @@ public class CustomUserDetails implements UserDetails {
     private String username;
     private String password;
     private Set<SimpleGrantedAuthority> authorities;
-    private boolean enabled;
 
     public CustomUserDetails(){}
 
@@ -28,7 +27,6 @@ public class CustomUserDetails implements UserDetails {
         this.password = user.getPassword();
         this.authorities = new HashSet<>();
         this.authorities.add(new SimpleGrantedAuthority(user.getRole().name()));
-        this.enabled = user.isEnabled();
     }
 
     @Override
@@ -63,6 +61,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return true;
     }
 }
