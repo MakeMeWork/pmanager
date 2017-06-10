@@ -14,5 +14,5 @@ public class Message {
     private User user;
     private String content;
     @ManyToOne
-    private Forum forum;
+    private Project project;
 }

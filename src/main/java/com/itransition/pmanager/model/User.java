@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.List;
@@ -29,13 +30,13 @@ public class User{
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.role = Role.ROLE_USER;
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     @NotEmpty
+    @Column(unique = true)
     @Size(min = 4, max = 12)
     private String username;
     @Email
@@ -52,7 +53,7 @@ public class User{
     private List<Project> projects;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role role = Role.ROLE_USER;
 
     public long getId() {
         return id;

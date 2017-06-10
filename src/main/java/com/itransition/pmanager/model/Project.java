@@ -14,7 +14,8 @@ public class Project {
     private String name;
     private String description;
     @ManyToMany(fetch = FetchType.LAZY)
-    private List<User> developers;
+    private List<User> users;
+    @Enumerated(EnumType.STRING)
     private State state;
 
 

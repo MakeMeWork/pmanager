@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.Valid;
 import java.awt.*;
 import java.security.Security;
 
@@ -54,7 +55,7 @@ public class MainController {
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public  String registration(@ModelAttribute("user") User user, BindingResult bindingResult, Model model){
+    public  String registration(@Valid@ModelAttribute("user") User user, BindingResult bindingResult, Model model){
         if (bindingResult.hasErrors()){
             return "registration";
         }
