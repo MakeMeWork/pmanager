@@ -1,19 +1,7 @@
 package com.itransition.pmanager.model;
 
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
-import java.util.Collection;
 import java.util.List;
-
-import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.enabled;
 
 /**
  * Created by Lenovo on 01.06.2017.
@@ -35,20 +23,14 @@ public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    @NotEmpty
-    @Column(unique = true)
-    @Size(min = 4, max = 12)
     private String username;
-    @Email
-    @NotEmpty
     private String email;
-    @NotEmpty
-    @Size(min = 6)
     private String password;
     private String firstName;
     private String lastName;
     private boolean verify;
-    private String avatar;
+    private String avatar = "default.jpg";
+
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Project> projects;
 
@@ -113,6 +95,14 @@ public class User{
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
     }
 
     public Role getRole() {

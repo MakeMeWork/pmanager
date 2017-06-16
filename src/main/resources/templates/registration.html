@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Registrtion</title>
-
+    <title>ProManager home</title>
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet"/>
     <link href="css/bootstrap-theme.min.css" rel="stylesheet"/>
-
+    <link href="sticky-footer-navbar.css" rel="stylesheet"/>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -19,50 +20,117 @@
     <![endif]-->
 </head>
 <body>
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-            <div class="panel panel-default" style="margin-top:45px">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Registration</h3>
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/home">ProManager</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <div class="col-md-6 navbar-form">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search..."/>
+                                <span class="input-group-btn">
+                                <button class="btn btn-default" type="button">Search</button>
+                            </span>
+                            </div><!-- /input-group -->
+                        </div><!-- /.col-lg-6 -->
+                    </li>
+                </ul>
+                <div sec:authorize="!isAuthenticated()" class="navbar-form navbar-right">
+                    <a href="/login" class="btn btn-link active" role="button">Sign in</a>
+                    <span class="text-lightgray"> or </span>
+                    <a href="/registration" class="btn btn-link active" role="button">Sign up</a>
                 </div>
-                <div class="panel-body">
-                    <form th:object="${user}" method="post">
-                        <div class="form-group">
-                            <label for="username">Username</label>
-                            <input id="username" class="form-control" type="text" th:field="*{username}" />
-                            <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username error</div>
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" th:field="*{password}"/>
-                            <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</div>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" class="form-control" id="email" th:field="*{email}"/>
-                            <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</div>
-                        </div>
-                        <div class="form-group">
-                            <label for="firstName">First name</label>
-                            <input type="text" class="form-control" id="firstName" th:field="*{firstName}"/>
-                            <div th:if="${#fields.hasErrors('firstName')}" th:errors="*firstName">Name error</div>
-                        </div>
-                        <div class="form-group">
-                            <label for="lastName">Last name</label>
-                            <input type="text" class="form-control" id="lastName" th:field="*{lastName}"/>
-                            <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Name error</div>
-                        </div>
+                <ul sec:authorize="isAuthenticated()" class="nav navbar-nav navbar-right">
+                    <li id="fat-menu" class="dropdown">
+                        <a href="#" role="button" class="dropdown-toggle btn btn-link active" data-toggle="dropdown">
+                            <img th:src="@{'/profile/img/' + ${me.avatar}}" alt="avatar" class="img-circle img-responsive navbar-nav" style="max-height: 22px;"/>
+                            <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a th:href="@{'/profile/'+${me.username}}">Profile</a></li>
+                            <li><a th:href="@{'/profile/'+${me.username}+'/settings'}">Settings</a></li>
+                            <li><a sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" th:href="@{'/project/create'}">Create project</a></li>
+                            <li><a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{'/admin'}">Admin panel</a></li>
+                            <li class="divider"></li>
+                            <li><a href="/logout">Log out</a></li>
+                        </ul>
+                    </li>
+                </ul>                 <!-- /input-group -->
+            </div><!--/.navbar-collapse -->
+        </div>
+    </div>
+    <!-- Begin page content -->
+
+    <div class="container">
+        <!-- Example row of columns -->
+        <div class="page-header">
+            <h1>Create your Developer Account</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-8"></div>
+            <div class=" jumbotro col-md-4">
+                <form th:object="${user}" method="post">
+                    <div class="form-group">
                         <div class="row">
-                            <div class="col-xs-6 col-md-4">
-                                <button type="submit" class="btn btn-default">Sign up</button>
+                            <div class="col-xs-6">
+                                <label for="firstName">First name</label>
+                                <input type="text" class="form-control" id="firstName" th:field="*{firstName}" placeholder="First name"/>
                             </div>
+                            <div class="col-xs-6">
+                                <label for="lastName">Last name</label>
+                                <input type="text" class="form-control" id="lastName" th:field="*{lastName}" placeholder="Last name"/>
+                            </div>
+                            <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('firstName')}" th:errors="*firstName">Name error</div>
+                            <div class="alert alert-danger" role="alert"  th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Name error</div>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input id="username" class="form-control" type="text" th:field="*{username}" placeholder="Username"/>
+                        <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username error</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Password"/>
+                        <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="Email"/>
+                        <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-10 col-md-8">
+                        </div>
+                        <div class="col-xs-2 col-md-4 pull-right">
+                            <button type="submit" class="btn btn-primary pull-right">Sign up</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</div>
+    <div id="footer">
+        <div class="container">
+            <p class="text-muted">The best of the best!</p>
+        </div>
+    </div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+
 </body>
 </html>

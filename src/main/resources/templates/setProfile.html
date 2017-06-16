@@ -7,11 +7,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>ProManager home</title>
+    <title>Settings</title>
     <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="css/bootstrap-theme.min.css" rel="stylesheet"/>
-    <link href="sticky-footer-navbar.css" rel="stylesheet"/>
+    <link href="../../css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="../../css/bootstrap-theme.min.css" rel="stylesheet"/>
+    <link href="../../sticky-footer-navbar.css" rel="stylesheet"/>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -36,7 +36,7 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li>
-                    <div class="col-md-8 navbar-form">
+                    <div class="col-md-6 navbar-form">
                         <div class="input-group">
                             <input type="text" class="form-control" placeholder="Search..."/>
                             <span class="input-group-btn">
@@ -65,35 +65,63 @@
                         <li><a href="/logout">Log out</a></li>
                     </ul>
                 </li>
-            </ul>             <!-- /input-group -->
+            </ul>                   <!-- /input-group -->
         </div><!--/.navbar-collapse -->
     </div>
 </div>
 <div class="container">
     <div class="row">
-        <div class="col-md-8">
-            <!-- Main jumbotron for a primary marketing message or call to action -->
-            <div sec:authorize="!isAuthenticated()" class="jumbotron" style="padding: 15px;">
-                <div class="container">
-                    <h1>Hello from ProManager</h1>
-                    <p>ProManager is a platform for a simple project management. You can host, manage projects, and build software alongside of other developers.</p>
-                    <p><a class="btn btn-primary btn-lg" role="button" href="/registration">Sign up for ProManager &raquo;</a></p>
+        <div class="col-md-8 jumbotron">
+
+            <form method="post" th:object="${user}" enctype="multipart/form-data" th:action="@{'/profile/'+${user.username}+'/newimg'}" class="col-md-4">
+                <img th:src="@{'/profile/img/' + ${user.avatar}}" alt="avatar" class="img-rounded img-responsive" style="background-color:white;"/>
+                <label for="file">New profile image:</label>
+                <input id="file" name="file" type="file" class="form-control"/>
+                <input style="width: 100%;" type="submit" class="btn btn-default" value="Upload"/>
+                <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('firstName')}" th:errors="*firstName">Name error</div>
+            </form>
+
+            <form method="post" th:object="${user}" class="bg-info col-md-8" style="padding-bottom: 12px;">
+                <h3 id="username" th:field="*{username}" th:text="${user.username}"></h3>
+                <div class="row" >
+                    <div class="col-xs-6">
+                        <label for="firstName">First name</label>
+                        <input th:value="${user.firstName}" type="text" class="form-control" id="firstName" th:field="*{firstName}" placeholder="First name"/>
+                    </div>
+                    <div class="col-xs-6">
+                        <label for="lastName">Last name</label>
+                        <input th:value="${user.firstName}" type="text" class="form-control" id="lastName" th:field="*{lastName}" placeholder="Last name"/>
+                    </div>
+                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('firstName')}" th:errors="*firstName">Name error</div>
+                    <div class="alert alert-danger" role="alert"  th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Name error</div>
                 </div>
-            </div>
-            <!-- Example row of columns -->
-            <div>
-                <h2>Heading</h2>
-                <div sec:authorize="isAuthenticated()">
-                    This content is only shown to authenticated users.
+                <div sec:authorize="hasRole('ROLE_USER')" class="form-group">
+                    <label for="newpass">Old password</label>
+                    <input type="password" class="form-control" id="newpass" th:object="${newpass}" placeholder="Password"/>
+                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</div>
                 </div>
-                <div sec:authorize="hasRole('ROLE_ADMIN')">
-                    This content is only shown to administrators.
+                <div sec:authorize="hasRole('ROLE_ADMIN')" class="form-group">
+                    <label for="newpass">Old password</label>
+                    <input th:value="${user.password}" type="text" class="form-control" id="newpass" th:object="${newpass}" placeholder="Password"/>
+                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</div>
                 </div>
-                <div sec:authorize="hasRole('ROLE_USER')">
-                    This content is only shown to users.
+                <div class="form-group">
+                    <label for="password">New password</label>
+                    <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Password"/>
                 </div>
-                <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-            </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="Email" th:value="${user.email}"/>
+                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-10 col-md-8">
+                    </div>
+                    <div class="col-xs-2 col-md-4 pull-right">
+                        <button type="submit" class="btn btn-primary pull-right">Submit</button>
+                    </div>
+                </div>
+            </form>
         </div>
         <div class="col-md-4">
             <div sec:authorize="!isAuthenticated()">
@@ -110,7 +138,8 @@
             </div>
         </div>
     </div>
-</div> <!-- /container -->
+</div>
+<!-- /container -->
 <div id="footer">
     <div class="container">
         <p class="text-muted">The best of the best!</p>
@@ -121,6 +150,6 @@
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
 </body>
 </html>

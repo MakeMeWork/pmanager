@@ -18,6 +18,7 @@ databaseChangeLog:
                   type: varchar(12)
                   constraints:
                     nullable: false
+                    unique: true
               - column:
                   name: password
                   type: varchar(100)
@@ -30,10 +31,10 @@ databaseChangeLog:
                   name: role
                   type: char(50)
               - column:
-                  name: firstName
+                  name: first_name
                   type: varchar(50)
               - column:
-                  name: lastName
+                  name: last_name
                   type: varchar(50)
               - column:
                   name: avatar
@@ -41,6 +42,7 @@ databaseChangeLog:
               - column:
                   name: verify
                   type: boolean
+                  defaultValueBoolean: false
 
   - changeSet:
       id: 2
@@ -62,14 +64,17 @@ databaseChangeLog:
                    name: role
                    value: ROLE_ADMIN
                - column:
-                   name: firstName
+                   name: first_name
                    value: Trevor
                - column:
-                   name: lastName
+                   name: last_name
                    value: Philips
                - column:
                    name: avatar
                    value: default
+               - column:
+                   name: verify
+                   valueBoolean: true
 
   - changeSet:
       id: 3
@@ -90,6 +95,7 @@ databaseChangeLog:
                   type: varchar(50)
                   constraints:
                     nullable: false
+                    unique: true
               - column:
                   name: description
                   type: text
@@ -97,93 +103,184 @@ databaseChangeLog:
                   name: state
                   type: varchar(10)
   - changeSet:
-        id: 4
-        author: eliseenko
-        changes:
-          - createTable:
-              tableName: message
-              columns:
-                - column:
-                    name: id
-                    type: int
-                    autoIncrement: true
-                    constraints:
-                      primaryKey: true
-                      nullable: false
-                - column:
-                    name: content
-                    type: text
-                    constraints:
-                      nullable: false
-                - column:
-                    name: project_id
-                    type: int
-                - column:
-                    name: user_id
-                    type: int
+      id: 4
+      author: eliseenko
+      changes:
+        - createTable:
+            tableName: message
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: content
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: project_id
+                  type: int
+              - column:
+                  name: user_id
+                  type: int
   - changeSet:
-          id: 5
-          author: eliseenko
-          changes:
-            - createTable:
-                tableName: user_projects
-                columns:
-                  - column:
-                      name: user_id
-                      type: int
-                  - column:
-                      name: projects_id
-                      type: int
+      id: 5
+      author: eliseenko
+      changes:
+        - createTable:
+            tableName: user_projects
+            columns:
+              - column:
+                  name: user_id
+                  type: int
+              - column:
+                  name: projects_id
+                  type: int
   - changeSet:
-          id: 6
-          author: eliseenko
-          changes:
-            - addForeignKeyConstraint:
-                  baseColumnNames: user_id
+      id: 6
+      author: eliseenko
+      changes:
+        - addForeignKeyConstraint:
+              baseColumnNames: user_id
+              baseTableName: user_projects
+              constraintName: fk_user_project
+              referencedColumnNames: id
+              referencedTableName: user
+  - changeSet:
+      id: 7
+      author: eliseenko
+      changes:
+        - addForeignKeyConstraint:
+                  baseColumnNames: projects_id
                   baseTableName: user_projects
-                  constraintName: fk_user_project
+                  constraintName: fk_project_user
+                  referencedColumnNaprojectmes: id
+                  referencedTableName:
+  - changeSet:
+      id: 8
+      author: eliseenko
+      changes:
+        - createTable:
+            tableName: project_users
+            columns:
+              - column:
+                  name: project_id
+                  type: int
+              - column:
+                  name: users_id
+                  type: int
+  - changeSet:
+      id: 9
+      author: eliseenko
+      changes:
+        - addForeignKeyConstraint:
+              baseColumnNames: users_id
+              baseTableName: project_users
+              constraintName: fk_user_projects
+              referencedColumnNames: id
+              referencedTableName: user
+  - changeSet:
+      id: 10
+      author: eliseenko
+      changes:
+        - addForeignKeyConstraint:
+                  baseColumnNames: project_id
+                  baseTableName: project_users
+                  constraintName: fk_project_users
                   referencedColumnNames: id
-                  referencedTableName: user
+                  referencedTableName: project
   - changeSet:
-          id: 7
-          author: eliseenko
-          changes:
-            - addForeignKeyConstraint:
-                      baseColumnNames: projects_id
-                      baseTableName: user_projects
-                      constraintName: fk_project_user
-                      referencedColumnNames: id
-                      referencedTableName: project
-  - changeSet:
-            id: 8
-            author: eliseenko
-            changes:
-              - createTable:
-                  tableName: project_users
-                  columns:
-                    - column:
-                        name: project_id
-                        type: int
-                    - column:
-                        name: users_id
-                        type: int
-  - changeSet:
-            id: 9
-            author: eliseenko
-            changes:
-              - addForeignKeyConstraint:
-                    baseColumnNames: users_id
-                    baseTableName: project_users
-                    constraintName: fk_user_projects
-                    referencedColumnNames: id
-                    referencedTableName: user
-  - changeSet:
-            id: 10
-            author: eliseenko
-            changes:
-              - addForeignKeyConstraint:
-                        baseColumnNames: project_id
-                        baseTableName: project_users
-                        constraintName: fk_project_users
-                        referencedColumnNames: id
-                        referencedTableName: project
+      id: 11
+      author: eliseenko
+      changes:
+        - createTable:
+            tableName: tag
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: popularity
+                  type: int
+                  defaultValue: 1
+- changeSet:
+      id: 12
+      author: eliseenko
+      changes:
+        - createTable:
+            tableName: project_tags
+            columns:
+              - column:
+                  name: project_id
+                  type: int
+              - column:
+                  name: tags_id
+                  type: int
+
+- changeSet:
+      id: 13
+      author: eliseenko
+      changes:
+        - addForeignKeyConstraint:
+              baseColumnNames: tags_id
+              baseTableName: project_tags
+              constraintName: fk_project_tags
+              referencedColumnNames: id
+              referencedTableName: tag
+- changeSet:
+      id: 14
+      author: eliseenko
+      changes:
+        - addForeignKeyConstraint:
+              baseColumnNames: project_id
+              baseTableName: project_tags
+              constraintName: fk_tags_project
+              referencedColumnNames: id
+              referencedTableName: project
+- changeSet:
+      id: 15
+      author: eliseenko
+      changes:
+        - createTable:
+            tableName: tag_projects
+            columns:
+              - column:
+                  name: tag_id
+                  type: int
+              - column:
+                  name: projects_id
+                  type: int
+
+- changeSet:
+      id: 13
+      author: eliseenko
+      changes:
+        - addForeignKeyConstraint:
+              baseColumnNames: tag_id
+              baseTableName: tag_projects
+              constraintName: fk_projects_tag
+              referencedColumnNames: id
+              referencedTableName: tag
+- changeSet:
+      id: 14
+      author: eliseenko
+      changes:
+        - addForeignKeyConstraint:
+              baseColumnNames: project_id
+              baseTableName: tag_projects
+              constraintName: fk_tag_projects
+              referencedColumnNames: id
+              referencedTableName: project

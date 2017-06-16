@@ -7,11 +7,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>ProManager home</title>
+    <title th:text="${user.username}"></title>
     <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="css/bootstrap-theme.min.css" rel="stylesheet"/>
-    <link href="sticky-footer-navbar.css" rel="stylesheet"/>
+    <link href="http://localhost:8082/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://localhost:8082/css/bootstrap-theme.min.css" rel="stylesheet"/>
+    <link href="http://localhost:8082/sticky-footer-navbar.css" rel="stylesheet"/>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -36,7 +36,7 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li>
-                    <div class="col-md-8 navbar-form">
+                    <div class="col-md-6 navbar-form">
                         <div class="input-group">
                             <input type="text" class="form-control" placeholder="Search..."/>
                             <span class="input-group-btn">
@@ -65,34 +65,44 @@
                         <li><a href="/logout">Log out</a></li>
                     </ul>
                 </li>
-            </ul>             <!-- /input-group -->
+            </ul>                   <!-- /input-group -->
         </div><!--/.navbar-collapse -->
     </div>
 </div>
 <div class="container">
     <div class="row">
-        <div class="col-md-8">
-            <!-- Main jumbotron for a primary marketing message or call to action -->
-            <div sec:authorize="!isAuthenticated()" class="jumbotron" style="padding: 15px;">
-                <div class="container">
-                    <h1>Hello from ProManager</h1>
-                    <p>ProManager is a platform for a simple project management. You can host, manage projects, and build software alongside of other developers.</p>
-                    <p><a class="btn btn-primary btn-lg" role="button" href="/registration">Sign up for ProManager &raquo;</a></p>
-                </div>
+        <div class="col-md-8 jumbotron">
+            <div th:object="${user}">
+                <p sec:authorize="(#object.username == authentication.name) or hasRole('ROLE_ADMIN')" th:if="!${user.verify}" class="bg-warning" style="text-align:center;">Please verify you email</p>
             </div>
-            <!-- Example row of columns -->
-            <div>
-                <h2>Heading</h2>
-                <div sec:authorize="isAuthenticated()">
-                    This content is only shown to authenticated users.
-                </div>
-                <div sec:authorize="hasRole('ROLE_ADMIN')">
-                    This content is only shown to administrators.
-                </div>
-                <div sec:authorize="hasRole('ROLE_USER')">
-                    This content is only shown to users.
-                </div>
-                <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+            <div class="col-md-4 col-xs-4">
+                <img th:src="@{'/profile/img/' + ${user.avatar}}" alt="avatar" class="img-rounded img-responsive" style="background-color:white;"/>
+                <p class="text-muted" style="font-size: 14px; text-align: center;" th:text="${user.role.getLabel()}"></p>
+            </div>
+            <div class="col-md-6 col-xs-8 bg-info">
+                <h3> <span th:text="${user.firstName}"></span> <span th:text="${user.lastName}"></span></h3>
+                <p th:text="${user.username}"></p>
+                <p th:text="${user.email}"></p>
+                <p th:if="${user.verify}"> Verificated</p>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th>Link</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="project : ${user.projects}">
+                        <td th:text="${project.name}"></td>
+                        <td><a th:href="@{'../project/' + ${project.id}}">Go to project</a> </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-2" th:object="${user}">
+                <a sec:authorize="(#object.username == authentication.name) or hasRole('ROLE_ADMIN')" class="btn btn-link" th:href="@{${user.username}+'/settings'}" role="button">Settings</a>
+                <a class="btn btn-link" role="button" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')"> Add to project</a>
+                <span class="sr-only">Fix</span>
             </div>
         </div>
         <div class="col-md-4">
@@ -110,7 +120,8 @@
             </div>
         </div>
     </div>
-</div> <!-- /container -->
+</div>
+<!-- /container -->
 <div id="footer">
     <div class="container">
         <p class="text-muted">The best of the best!</p>
@@ -121,6 +132,6 @@
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
+<script src="http://localhost:8082/js/bootstrap.min.js"></script>
 </body>
 </html>
