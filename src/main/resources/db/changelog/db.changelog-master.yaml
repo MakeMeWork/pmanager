@@ -158,8 +158,8 @@ databaseChangeLog:
                   baseColumnNames: projects_id
                   baseTableName: user_projects
                   constraintName: fk_project_user
-                  referencedColumnNaprojectmes: id
-                  referencedTableName:
+                  referencedColumnNames: id
+                  referencedTableName: project
   - changeSet:
       id: 8
       author: eliseenko
@@ -216,71 +216,92 @@ databaseChangeLog:
                   name: popularity
                   type: int
                   defaultValue: 1
-- changeSet:
-      id: 12
-      author: eliseenko
-      changes:
-        - createTable:
-            tableName: project_tags
-            columns:
-              - column:
-                  name: project_id
-                  type: int
-              - column:
-                  name: tags_id
-                  type: int
+  - changeSet:
+        id: 12
+        author: eliseenko
+        changes:
+          - createTable:
+              tableName: project_tags
+              columns:
+                - column:
+                    name: project_id
+                    type: int
+                - column:
+                    name: tags_id
+                    type: int
 
-- changeSet:
-      id: 13
-      author: eliseenko
-      changes:
-        - addForeignKeyConstraint:
-              baseColumnNames: tags_id
-              baseTableName: project_tags
-              constraintName: fk_project_tags
-              referencedColumnNames: id
-              referencedTableName: tag
-- changeSet:
-      id: 14
-      author: eliseenko
-      changes:
-        - addForeignKeyConstraint:
-              baseColumnNames: project_id
-              baseTableName: project_tags
-              constraintName: fk_tags_project
-              referencedColumnNames: id
-              referencedTableName: project
-- changeSet:
-      id: 15
-      author: eliseenko
-      changes:
-        - createTable:
-            tableName: tag_projects
-            columns:
-              - column:
-                  name: tag_id
-                  type: int
-              - column:
-                  name: projects_id
-                  type: int
+  - changeSet:
+        id: 13
+        author: eliseenko
+        changes:
+          - addForeignKeyConstraint:
+                baseColumnNames: tags_id
+                baseTableName: project_tags
+                constraintName: fk_project_tags
+                referencedColumnNames: id
+                referencedTableName: tag
+  - changeSet:
+        id: 14
+        author: eliseenko
+        changes:
+          - addForeignKeyConstraint:
+                baseColumnNames: project_id
+                baseTableName: project_tags
+                constraintName: fk_tags_project
+                referencedColumnNames: id
+                referencedTableName: project
+  - changeSet:
+        id: 15
+        author: eliseenko
+        changes:
+          - createTable:
+              tableName: tag_projects
+              columns:
+                - column:
+                    name: tag_id
+                    type: int
+                - column:
+                    name: projects_id
+                    type: int
 
-- changeSet:
-      id: 13
-      author: eliseenko
-      changes:
-        - addForeignKeyConstraint:
-              baseColumnNames: tag_id
-              baseTableName: tag_projects
-              constraintName: fk_projects_tag
+  - changeSet:
+        id: 16
+        author: eliseenko
+        changes:
+          - addForeignKeyConstraint:
+                baseColumnNames: tag_id
+                baseTableName: tag_projects
+                constraintName: fk_projects_tag
+                referencedColumnNames: id
+                referencedTableName: tag
+  - changeSet:
+        id: 17
+        author: eliseenko
+        changes:
+          - addForeignKeyConstraint:
+                baseColumnNames: projects_id
+                baseTableName: tag_projects
+                constraintName: fk_tag_projects
+                referencedColumnNames: id
+                referencedTableName: project
+  - changeSet:
+        id: 18
+        author: eliseenko
+        changes:
+          - addForeignKeyConstraint:
+              baseColumnNames: user_id
+              baseTableName: message
+              constraintName: fk_user_message
               referencedColumnNames: id
-              referencedTableName: tag
-- changeSet:
-      id: 14
-      author: eliseenko
-      changes:
-        - addForeignKeyConstraint:
-              baseColumnNames: project_id
-              baseTableName: tag_projects
-              constraintName: fk_tag_projects
-              referencedColumnNames: id
-              referencedTableName: project
+              referencedTableName: user
+  - changeSet:
+        id: 19
+        author: eliseenko
+        changes:
+          - addForeignKeyConstraint:
+                  baseColumnNames: project_id
+                  baseTableName: message
+                  constraintName: fk_project_message
+                  referencedColumnNames: id
+                  referencedTableName: project
+

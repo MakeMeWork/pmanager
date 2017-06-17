@@ -7,7 +7,8 @@ import org.springframework.data.repository.query.Param;
 /**
  * Created by Lenovo on 12.06.2017.
  */
-public interface ProjectDao extends JpaRepository<Project, Long> {
+public interface ProjectDao extends JpaRepository<Project, Integer> {
     Project findFirstById(long Id);
     Project findByName(@Param("name") String name);
+    //List<Project> findAllOrderById();
 }

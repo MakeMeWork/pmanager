@@ -43,13 +43,13 @@ public class MailConfiguration {
         mailSender.setHost(host);
         mailSender.setPort(port);
         mailSender.setProtocol(protocol);
-        if(settingsService.getProperty("username")!= ""){
-            mailSender.setUsername(settingsService.getProperty("username")+"@gmail.com");
+        if(settingsService.getProperty("usernamegm")!= ""){
+            mailSender.setUsername(settingsService.getProperty("usernamegm")+"@gmail.com");
         }else{
             mailSender.setUsername(username+"@gmail.com");
         }
-        if(settingsService.getProperty("username")!= ""){
-            mailSender.setPassword(settingsService.getProperty("password"));
+        if(settingsService.getProperty("passwordgm")!= ""){
+            mailSender.setPassword(settingsService.getProperty("passwordgm"));
         }else{
             mailSender.setPassword(password);
         }

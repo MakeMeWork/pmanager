@@ -7,6 +7,6 @@ import org.springframework.data.repository.query.Param;
 /**
  * Created by Lenovo on 14.06.2017.
  */
-public interface VerificationDao extends JpaRepository<Verification, Long> {
+public interface VerificationDao extends JpaRepository<Verification, Integer> {
     public Verification findByLink(@Param("link") String link);
 }

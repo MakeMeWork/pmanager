@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -36,6 +37,9 @@ public class UserService {
             }
             userDao.save(entity);
         }
+    }
+    public List<User> findAll(){
+        return userDao.findAll();
     }
 
 }

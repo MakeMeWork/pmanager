@@ -35,6 +35,10 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
+                <li><a href="/home">Home</a></li>
+                <li><a href="/news">News</a></li>
+                <li><a href="/project">Projects</a> </li>
+                <li><a href="/profile">Users</a></li>
                 <li>
                     <div class="col-md-6 navbar-form">
                         <div class="input-group">
@@ -53,19 +57,21 @@
             </div>
             <ul sec:authorize="isAuthenticated()" class="nav navbar-nav navbar-right">
                 <li id="fat-menu" class="dropdown">
-                    <a href="#" role="button" class="dropdown-toggle btn btn-link active" data-toggle="dropdown">
+                    <a href="#" role="button" class="dropdown-toggle btn btn-link active visible-md visible-lg" data-toggle="dropdown">
                         <img th:src="@{'/profile/img/' + ${me.avatar}}" alt="avatar" class="img-circle img-responsive navbar-nav" style="max-height: 22px;"/>
+                        <b class="caret"></b></a>
+                    <a href="#" role="button" class="dropdown-toggle btn btn-link active hidden-md hidden-lg" data-toggle="dropdown" th:text="${me.username}">
                         <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li><a th:href="@{'/profile/'+${me.username}}">Profile</a></li>
                         <li><a th:href="@{'/profile/'+${me.username}+'/settings'}">Settings</a></li>
                         <li><a sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" th:href="@{'/project/create'}">Create project</a></li>
-                        <li><a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{'/admin'}">Admin panel</a></li>
+                        <li><a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{'/admin?usrs=usrs'}">Admin panel</a></li>
                         <li class="divider"></li>
                         <li><a href="/logout">Log out</a></li>
                     </ul>
                 </li>
-            </ul>                   <!-- /input-group -->
+            </ul>                 <!-- /input-group -->
         </div><!--/.navbar-collapse -->
     </div>
 </div>
@@ -94,7 +100,7 @@
                     <tbody>
                     <tr th:each="project : ${user.projects}">
                         <td th:text="${project.name}"></td>
-                        <td><a th:href="@{'../project/' + ${project.id}}">Go to project</a> </td>
+                        <td><a th:href="@{'/project/' + ${project.name}}">Go to project</a> </td>
                     </tr>
                     </tbody>
                 </table>

@@ -9,7 +9,7 @@ import javax.persistence.*;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private int id;
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
     private String content;

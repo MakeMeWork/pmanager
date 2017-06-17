@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by Lenovo on 16.06.2017.
@@ -18,18 +16,18 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Tag {
+public class Source {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    private String name;
-    private int popularity=1;
-    @ManyToMany(fetch = FetchType.LAZY)
-    private Set<Project> projects = new HashSet<Project>(0);
+    private String filename;
+    private String link;
+    @ManyToOne
+    private Project project;
 
-    public Tag(String name, Project project) {
-        this.name = name;
-        projects = new HashSet<Project>();
-        projects.add(project);
+    public Source(String filename, String link, Project project) {
+        this.filename = filename;
+        this.link = link;
+        this.project = project;
     }
 }

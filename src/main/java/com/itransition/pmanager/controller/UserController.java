@@ -67,8 +67,12 @@ public class UserController {
         if(Objects.nonNull(user)){
             model.addAttribute("me", userService.findOne(user.getName()));
         }
+        User fUser = userService.findOne(username);
+        if(Objects.nonNull(fUser)){
         model.addAttribute("user", userService.findOne(username));
-        return "profile";
+            return "profile";
+        }
+        return "redirect:../profile";
     }
 
     @GetMapping("/{username}/settings")

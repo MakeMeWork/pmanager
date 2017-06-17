@@ -5,6 +5,7 @@ import com.itransition.pmanager.model.Settings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -25,7 +26,9 @@ public class SettingsService {
         }
 
     }
-
+    public List<Settings> findAll(){
+        return settingsDao.findAll();
+    }
     public String getProperty(String key){
         if (Objects.nonNull(settingsDao.findByMykey(key))) {
             return settingsDao.findByMykey(key).getMyvalue();

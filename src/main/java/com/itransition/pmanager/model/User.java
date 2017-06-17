@@ -1,6 +1,7 @@
 package com.itransition.pmanager.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ public class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private int id;
     private String username;
     private String email;
     private String password;
@@ -32,7 +33,9 @@ public class User{
     private String avatar = "default.jpg";
 
     @ManyToMany(fetch = FetchType.LAZY)
-    private List<Project> projects;
+    private List<Project> projects = new ArrayList<Project>(0);
+    @OneToMany
+    private List<Message> messages = new ArrayList<Message>(0);
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.ROLE_USER;

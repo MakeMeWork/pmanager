@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Login</title>
+    <!-- Bootstrap -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/css/bootstrap-theme.min.css" rel="stylesheet"/>
+    <link href="/sticky-footer-navbar.css" rel="stylesheet"/>
+    <link href="/dashboard.css" rel="stylesheet"/>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<!-- Fixed navbar -->
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/home">ProManager</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/home">Home</a></li>
+                <li><a href="/news">News</a></li>
+                <li><a href="/project">Projects</a> </li>
+                <li><a href="/profile">Users</a></li>
+                <li>
+                    <div class="col-md-6 navbar-form">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search..."/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button">Search</button>
+                            </span>
+                        </div><!-- /input-group -->
+                    </div><!-- /.col-lg-6 -->
+                </li>
+            </ul>
+            <div sec:authorize="!isAuthenticated()" class="navbar-form navbar-right">
+                <a href="/login" class="btn btn-link active" role="button">Sign in</a>
+                <span class="text-lightgray"> or </span>
+                <a href="/registration" class="btn btn-link active" role="button">Sign up</a>
+            </div>
+            <ul sec:authorize="isAuthenticated()" class="nav navbar-nav navbar-right">
+                <li id="fat-menu" class="dropdown">
+                    <a href="#" role="button" class="dropdown-toggle btn btn-link active visible-md visible-lg" data-toggle="dropdown">
+                        <img th:src="@{'/profile/img/' + ${me.avatar}}" alt="avatar" class="img-circle img-responsive navbar-nav" style="max-height: 22px;"/>
+                        <b class="caret"></b></a>
+                    <a href="#" role="button" class="dropdown-toggle btn btn-link active hidden-md hidden-lg" data-toggle="dropdown" th:text="${me.username}">
+                        <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a th:href="@{'/profile/'+${me.username}}">Profile</a></li>
+                        <li><a th:href="@{'/profile/'+${me.username}+'/settings'}">Settings</a></li>
+                        <li><a sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" th:href="@{'/project/create'}">Create project</a></li>
+                        <li><a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{'/admin?usrs=usrs'}">Admin panel</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/logout">Log out</a></li>
+                    </ul>
+                </li>
+            </ul>                 <!-- /input-group -->
+        </div><!--/.navbar-collapse -->
+    </div>
+</div>
+<!-- Begin page content -->
+<br/>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar">
+                <li><a href="/admin?usrs=usrs">Users</a></li>
+                <li><a href="/admin?prjs=prjs">Projects</a></li>
+                <li><a href="/admin?set=set">Setting</a></li>
+                <li><a href="/admin?newsparam=newsparam">Add news</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header">Dashboard</h1>
+
+            <div class="row placeholders">
+                <div class="col-xs-6 col-sm-3 placeholder">
+                    <h4>Label</h4>
+                    <span class="text-muted">Something else</span>
+                </div>
+                <div class="col-xs-6 col-sm-3 placeholder">
+                    <h4>Label</h4>
+                    <span class="text-muted">Something else</span>
+                </div>
+                <div class="col-xs-6 col-sm-3 placeholder">
+                    <h4>Label</h4>
+                    <span class="text-muted">Something else</span>
+                </div>
+                <div class="col-xs-6 col-sm-3 placeholder">
+                    <h4>Label</h4>
+                    <span class="text-muted">Something else</span>
+                </div>
+            </div>
+
+            <h2 class="sub-header" th:if="${users}!=null">Users</h2>
+            <div class="table-responsive" th:if="${users}!=null">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Username</th>
+                        <th>First name</th>
+                        <th>Last name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Verification</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}"></td>
+                        <td> <a style="color: black;" th:text="${user.username}" th:href="@{'/profile/'+${user.username}}" class="btn btn-link" aria-hidden="true" role="button"></a></td>
+                        <td th:text="${user.firstName}"></td>
+                        <td th:text="${user.lastName}"></td>
+                        <td th:text="${user.email}"></td>
+                        <td th:text="${user.role.getLabel()}"></td>
+                        <td th:text="${user.verify}"></td>
+                        <td> <a th:href="@{'/profile/'+${user.username}+'/del'}"  class="close" aria-hidden="true" role="button">x</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 class="sub-header" th:if="${projects}!=null">Projects</h2>
+            <div class="table-responsive" th:if="${projects}!=null">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>State</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="project : ${projects}">
+                        <td th:text="${project.id}"></td>
+                        <td> <a style="color: black;" th:text="${project.name}" th:href="@{'/project/'+${project.name}}" class="btn btn-link" aria-hidden="true" role="button"></a></td>
+                        <td th:text="${project.description}"></td>
+                        <td th:text="${project.state}"></td>
+                        <td> <a th:href="@{'/project/+${project.name}+/delete'}" class="close" aria-hidden="true" role="button">x</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 class="sub-header" th:if="${settings}!=null">Settings</h2>
+            <div class="table-responsive" th:if="${settings}!=null">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="setting : ${settings}">
+                        <td th:text="${setting.mykey}"></td>
+                        <td th:text="${setting.myvalue}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <form th:if="${settings}!=null" th:object="${newset}" action="/admin" method="post">
+                <div class="form-group">
+                    <select id="mykey" th:field="*{mykey}" class="form-control">
+                        <option value="usernamegm">Login gmail</option>
+                        <option value="passwordgm">Password gmail</option>
+                        <option value="logindb">Database login</option>
+                        <option value="passworddb">Database password</option>
+                        <option value="dbname">Database name</option>
+                        <option value="hostname">Hostname</option>
+                    </select>
+                    <span>
+                        <input type="text" class="form-control" id="myvalue" placeholder="Value" th:field="*{myvalue}"/>
+                    </span>
+                </div>
+                <div class="row">
+                    <div class="col-xs-2 col-md-4 col-md-offset-8 col-xs-offset-10">
+                        <button type="submit" class="btn btn-primary pull-right">Submit</button>
+                    </div>
+                </div>
+            </form>
+            <form th:if="${news}!=null" th:object="${news}" action="/news/add" method="post">
+                <div class="form-group" >
+                    <label for="name">News name</label>
+                    <input type="text" class="form-control" id="name" placeholder="Login" th:field="*{name}"/>
+                </div>
+                <div class="form-group">
+                    <label for="content">Content</label>
+                    <textarea rows="6" type="text" class="form-control" id="content" placeholder="Content" th:field="*{content}"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="link">Link</label>
+                    <input type="text" class="form-control" id="link" placeholder="Link" th:field="*{link}"/>
+                </div>
+                <div class="row">
+                    <div class="col-xs-2 col-md-4 col-md-offset-8 col-xs-offset-10">
+                        <button type="submit" class="btn btn-primary pull-right">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+</body>
+</html>

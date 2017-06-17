@@ -4,7 +4,7 @@ package com.itransition.pmanager.model;
  * Created by Lenovo on 01.06.2017.
  */
 public enum Role{
-    ROLE_USER("User"),
+    ROLE_USER("Developer"),
     ROLE_MANAGER("Manager"),
     ROLE_ADMIN("Admin");
 

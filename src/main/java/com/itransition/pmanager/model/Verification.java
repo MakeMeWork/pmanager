@@ -19,7 +19,7 @@ import javax.persistence.Id;
 public class Verification {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private int id;
     private String user;
     private String link;
 
