@@ -148,14 +148,14 @@
                         <h3 id="prName" th:text="${project.name}" style="display: inline-block;"></h3>
                         <span class="text-muted pull-right" th:text="${project.state}"></span>
                         <p th:text="${project.description}" id="description" contenteditable="false"></p>
-                        <button sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" id="changeBtn" class="btn btn-link pull-right" onclick="makeEditable('description','changeBtn')">
+                        <button th:if="${project.state.getState()} == Open" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" id="changeBtn" class="btn btn-link pull-right" onclick="makeEditable('description','changeBtn')">
                             Change
                         </button>
                         <br/>
                         <p>
                             <span th:each="tag : ${project.tags}" class="btn-group">
                                 <a  th:text="${tag.name}" th:href="@{'/search?tag='+${tag.name}}" role="button" class="btn btn-info btn-xs"></a>
-                                <a th:href="@{'/project/'+${project.name}+'/delete?tag=' + ${tag.name}}" role="button" class="btn btn-info btn-xs" aria-hidden="true">&times;</a>
+                                <a th:if="${project.state.getState()} == Open" th:href="@{'/project/'+${project.name}+'/delete?tag=' + ${tag.name}}" role="button" class="btn btn-info btn-xs" aria-hidden="true">&times;</a>
                             </span>
                         </p>
                     </div>
@@ -168,7 +168,7 @@
                                 <th>Last name</th>
                                 <th>Email</th>
                                 <th>Username</th>
-                                <th sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')"></th>
+                                <th th:if="${project.state.getState()} == Open" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')"></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -178,12 +178,12 @@
                                 <td th:text="${user.email}"></td>
                                 <td th:text="${user.username}"></td>
                                 <td sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-                                    <a th:href="@{'/project/'+${project.name}+'/delete?dev=' + ${user.username}}" role="button" class="close" aria-hidden="true">&times;</a>
+                                    <a th:if="${project.state.getState()} == Open" th:href="@{'/project/'+${project.name}+'/delete?dev=' + ${user.username}}" role="button" class="close" aria-hidden="true">&times;</a>
                                 </td>
                             </tr>
                             </tbody>
                             <tfoot sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-                            <form action="#" th:action="@{'/project/'+${project.name}+'/add'}" method="post">
+                            <form th:if="${project.state.getState()} == Open" action="#" th:action="@{'/project/'+${project.name}+'/add'}" method="post">
                                 <div class="input-group">
                                     <input class="form-control" type="text" id="username" name="username" placeholder="Add developer by username"/>
                                     <span class="input-group-btn">
@@ -285,7 +285,7 @@
                 </button>
                 </div>
                 <span></span>
-                <button sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" class="btn btn-default pull-left" data-toggle="modal" data-target="#myTag">
+                <button th:if="${project.state.getState()} == Open" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" class="btn btn-default pull-left" data-toggle="modal" data-target="#myTag">
                     Add new tag
                 </button>
                 </div>

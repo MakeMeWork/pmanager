@@ -91,7 +91,7 @@
                 <p th:text="${user.username}"></p>
                 <p th:text="${user.email}"></p>
                 <p th:if="${user.verify}"> Verificated</p>
-                <table class="table table-hover">
+                <table sec:authorize="hasRole('ROLE_USER')" class="table table-hover">
                     <thead>
                     <tr>
                         <th>Project</th>
@@ -108,8 +108,6 @@
             </div>
             <div class="col-md-2" th:object="${user}">
                 <a sec:authorize="(#object.username == authentication.name) or hasRole('ROLE_ADMIN')" class="btn btn-link" th:href="@{${user.username}+'/settings'}" role="button">Settings</a>
-                <a class="btn btn-link" role="button" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')"> Add to project</a>
-                <span class="sr-only">Fix</span>
             </div>
         </div>
         <div class="col-md-4">

@@ -96,7 +96,7 @@ public class MainController {
             return "registration";
         }
         verificationService.save(new Verification(user.getUsername(), ""+user.getPassword().hashCode()));
-        emailService.sendEmail(user.getEmail(),"http://"+host+"/activate/"+user.getPassword().hashCode());
+        emailService.sendEmail(user.getEmail(),"http://"+(settingsService.getProperty("hostname") != null? settingsService.getProperty("hostname"):host)+"/activate/"+user.getPassword().hashCode());
         userService.save(user);
         autorize(user);
         return "redirect:/home";

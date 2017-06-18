@@ -22,16 +22,16 @@ body {
 	margin: 0;
 	font-family: Tahoma;
 }
-#content{
+#content, #users, #projects{
 	font-size: 14px;
 	margin: 0 auto;
 	border: 1px solid #ccc;
 	padding: 0 7px;
 }
-	#content p{
+	#content p, #users p, #projects p{
 		margin: 10px;
 	}
-	#content p span:first-child{
+	#content p span:first-child, #users p span:first-child, #projects p span:first-child{
 		font-size: 20px;
 		font-weight: bold;
 		padding: 10px;

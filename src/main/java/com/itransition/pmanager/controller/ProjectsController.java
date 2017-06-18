@@ -178,6 +178,7 @@ public class ProjectsController {
     }
 
     @GetMapping("/{name}/open")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     public String openProject(@PathVariable("name") String name,
                                Model model){
         Project project = projectService.findOne(name);
@@ -194,9 +195,11 @@ public class ProjectsController {
         news.setName("Project "+project.getName()+" is open again!");
         news.setContent("Project " + project.getName() + " is open again. Everyone back to work. More information at the link." );
         news.setLink("/project/"+project.getName());
+        newsService.save(news);
     }
 
-    @PostMapping("/{name}/archive")
+    @GetMapping("/{name}/archive")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')")
     public String arhiveProject(@PathVariable("name") String name,
                          Model model){
         Project project = projectService.findOne(name);
@@ -213,6 +216,7 @@ public class ProjectsController {
         news.setName("Project "+project.getName()+" moved to archive!");
         news.setContent("Project " + project.getName() + " was moved to archive. Thank you all for your work! View the project at the link.");
         news.setLink("/project/"+project.getName());
+        newsService.save(news);
     }
     @GetMapping
     public String getProjects(Principal user, Model model){
@@ -228,17 +232,17 @@ public class ProjectsController {
                    @RequestParam(name = "count", required = false) Integer count){
         List<Project> projects = projectService.findAll();
         if(Objects.nonNull(type)){
-            return TemplateNews(projects.subList(0,10 > projects.size()? projects.size() : 10),10);
+            return TemplateProjects(projects.subList(0,10 > projects.size()? projects.size() : 10),10);
         }
         if(Objects.nonNull(count)){
             int start = count > projects.size() ? projects.size() : count;
             int last = start + 3 > projects.size() ? projects.size() : start + 3;
-            return TemplateNews(projects.subList(start,last),last);
+            return TemplateProjects(projects.subList(start,last),last);
         }
         return "";
     }
 
-    private String TemplateNews(List<Project> projects, int count) {
+    private String TemplateProjects(List<Project> projects, int count) {
         String news = "";
         for (Project project: projects
                 ) {

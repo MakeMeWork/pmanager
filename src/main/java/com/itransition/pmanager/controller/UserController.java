@@ -23,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -51,15 +52,6 @@ public class UserController {
         return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.CREATED);
     }
 
-    @GetMapping
-    @PreAuthorize("isAuthenticated()")
-    public String getMyProfile(Model model, Principal principal){
-        if(Objects.nonNull(principal)){
-            model.addAttribute("me", userService.findOne(principal.getName()));
-        }
-        model.addAttribute("user", userService.findOne(principal.getName()));
-        return "profile";
-    }
 
     @GetMapping("/{username}")
     public String getProfile(Model model, @PathVariable String username,Principal user){
@@ -99,10 +91,11 @@ public class UserController {
     public String acceptSettings(User user,String newpass , BindingResult bindingResult, Model model, @PathVariable String username){
         signupValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()&(user.getPassword().equals(userService.findOne(username).getPassword()))){
+            model.addAttribute("me", userService.findOne(username));
             return "setProfile";
         }
         userService.update(userService.findOne(username),user);
-        return "redirect:../"+username;
+        return "redirect:/profile/"+username;
     }
 
     @PostMapping("/{username}/newimg")
@@ -111,7 +104,8 @@ public class UserController {
                                          User user,
                                          BindingResult bindingResult,
                                          MultipartFile file,
-                                         HttpSession session) {
+                                         HttpSession session,
+                                         Model model) {
         User newuser = userService.findOne(username);
         newuser.setAvatar(newuser.getId() + ".jpg");
         userService.save(newuser);
@@ -121,9 +115,10 @@ public class UserController {
                 validateImage(file); // Проверить изображение
                 saveImage(newuser.getId() + ".jpg", file); // Сохранить файл
             }
-            return "redirect:/profile";
+            return "redirect:/profile/"+username;
         } catch (Exception e) {
             bindingResult.reject(e.getMessage());
+            model.addAttribute("me", user);
             return "setProfile";
         }
     }
@@ -141,6 +136,50 @@ public class UserController {
         } catch(IOException e) {
             throw new Exception(e);
         }
+    }
+
+    @GetMapping
+    public String getUsers(Principal user, Model model){
+        if(Objects.nonNull(user)){
+            model.addAttribute("me", userService.findOne(user.getName()));
+        }
+        return "usersList";
+    }
+    @GetMapping("/load")
+    public
+    @ResponseBody
+    String getNews(@RequestParam(name = "type", required = false) String type,
+                   @RequestParam(name = "count", required = false) Integer count){
+        List<User> users = userService.findAll();
+        if(Objects.nonNull(type)){
+            return TemplateUsers(users.subList(0,4 > users.size()? users.size() : 4),4);
+        }
+        if(Objects.nonNull(count)){
+            int start = count > users.size() ? users.size() : count;
+            int last = start + 3 > users.size() ? users.size() : start + 3;
+            return TemplateUsers(users.subList(start,last),last);
+        }
+        return "";
+    }
+
+    private String TemplateUsers(List<User> users, int count) {
+        String news = "";
+        for (User user: users
+                ) {
+            news+="<div class=\"panel-body\">\n" +
+                    "                <div class=\"col-md-4  col-xs-4\">" +
+                    "                <img src=\"/profile/img/"+user.getAvatar()+"\" alt=\"avatar\" class=\"img-rounded img-responsive\"/>\n" +
+                    "                <p class=\"text-muted\" style=\"font-size: 14px; text-align: center;\">" +user.getRole().getLabel()+ "</p>" +
+                    "                </div>"+
+                    "                <div class=\"col-md-8 col-xs-8\">\n" +
+                    "                <h3> <span>"+user.getFirstName()+"</span> <span>"+user.getLastName()+"</span></h3>\n" +
+                    "                <p>"+user.getUsername()+"</p>\n" +
+                    "                <p>"+user.getEmail()+"</p>\n" +
+                    "                <a href=\"/profile/"+user.getUsername()+"\" class=\"pull-right\">Profile</a>" +
+                    "                </div>"+"<hr/>"+
+                    "</div>\n";
+        }
+        return news+"<div class='next'><a href=\"\\profile\\load?count="+ count +"\"'>next</a></div>\n";
     }
 
 }
