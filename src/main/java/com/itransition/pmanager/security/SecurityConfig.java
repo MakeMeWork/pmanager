@@ -33,9 +33,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .and()
                 .formLogin().loginPage("/login").permitAll()
                 .and()
-                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/home").permitAll();
+                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/home").permitAll()
+                .and()
+                .exceptionHandling().accessDeniedPage("/403");
 
     }
+
 
     @Bean
     public PasswordEncoder bcryptPasswordEncoder() {

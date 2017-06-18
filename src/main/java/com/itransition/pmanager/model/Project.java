@@ -2,6 +2,7 @@ package com.itransition.pmanager.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 import ys.wikiparser.WikiParser;
 
 import javax.persistence.*;
@@ -30,6 +31,7 @@ public class Project {
     private List<Source> sources = new ArrayList<Source>(0);
     @OneToMany
     private List<Message> messages = new ArrayList<Message>(0);
+    @Type(type = "text")
     private String wiki="";
 
     public Project(){

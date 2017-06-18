@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Login</title>
+    <title>Admin</title>
     <!-- Bootstrap -->
     <link href="/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="/css/bootstrap-theme.min.css" rel="stylesheet"/>
@@ -182,14 +182,12 @@
                     </tbody>
                 </table>
             </div>
-            <form th:if="${settings}!=null" th:object="${newset}" action="/admin" method="post">
-                <div class="form-group">
+            <form th:if="${settings}!=null" th:object="${newset}" class="col-md-8 col-md-offset-2 panel panel-default" action="/admin" method="post">
+                <div class="panel-heading">New settings</div>
+                <div class="form-group panel-body">
                     <select id="mykey" th:field="*{mykey}" class="form-control">
                         <option value="usernamegm">Login gmail</option>
                         <option value="passwordgm">Password gmail</option>
-                        <option value="logindb">Database login</option>
-                        <option value="passworddb">Database password</option>
-                        <option value="dbname">Database name</option>
                         <option value="hostname">Hostname</option>
                     </select>
                     <span>
@@ -202,10 +200,11 @@
                     </div>
                 </div>
             </form>
-            <form th:if="${news}!=null" th:object="${news}" action="/news/add" method="post">
-                <div class="form-group" >
+            <form class="col-md-8 col-md-offset-2 panel panel-default" th:if="${news}!=null" th:object="${news}" action="/news/add" method="post">
+                <div class="panel-heading">Add news</div>
+                <div class="form-group panel-body" >
                     <label for="name">News name</label>
-                    <input type="text" class="form-control" id="name" placeholder="Login" th:field="*{name}"/>
+                    <input type="text" class="form-control" id="name" placeholder="News name" th:field="*{name}"/>
                 </div>
                 <div class="form-group">
                     <label for="content">Content</label>

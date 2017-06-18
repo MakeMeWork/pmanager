@@ -2,10 +2,10 @@ package com.itransition.pmanager.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by Lenovo on 16.06.2017.
@@ -14,7 +14,6 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class Source {
     @Id
@@ -22,8 +21,12 @@ public class Source {
     private int id;
     private String filename;
     private String link;
+    private Date date;
     @ManyToOne
     private Project project;
+    public Source(){
+        date = new Date();
+    }
 
     public Source(String filename, String link, Project project) {
         this.filename = filename;

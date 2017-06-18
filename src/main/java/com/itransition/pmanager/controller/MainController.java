@@ -17,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -48,13 +49,16 @@ public class MainController {
     @Autowired
     private TagService tagService;
 
+
     @RequestMapping(value = {"/", "/home"})
     public String HomePage(Principal user, Model model){
         if(Objects.nonNull(user)){
             getAtrributes(user, model);
         }else
             model.addAttribute("projects", projectService.findFiveProjects());
-        model.addAttribute("news", newsService.findFiveNews());
+        List<News> news = newsService.findAllsorted();
+        int i = news.size() > 5 ? 5 : news.size();
+        model.addAttribute("news", news.subList(0, i));
         model.addAttribute("tags", tagService.findSevenTags());
         return "home";
     }
@@ -68,14 +72,6 @@ public class MainController {
         }
     }
 
-    @GetMapping("/news")
-    public String newsPage(Principal user, Model model){
-        if(Objects.nonNull(user)){
-            model.addAttribute("me", userService.findOne(user.getName()));
-        }
-        model.addAttribute("news", newsService.findAll());
-        return "news";
-    }
 
     @PreAuthorize("!isAuthenticated()")
     @RequestMapping("/login")
@@ -154,13 +150,69 @@ public class MainController {
     }
 
     @PostMapping("/news/add")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String addNews(News news){
         newsService.save(news);
-        return "redirect:home";
+        return "redirect:/home";
     }
     @PostMapping("/admin")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String addSett(Settings newset){
         settingsService.save(newset);
         return "redirect:admin?set=set";
+    }
+
+    @GetMapping("/news")
+    public String getNewsPage(Principal user, Model model){
+        if(Objects.nonNull(user)){
+            getAtrributes(user, model);
+        }else
+            model.addAttribute("projects", projectService.findFiveProjects());
+        return "news";
+    }
+
+    @GetMapping("/newsload")
+    public
+    @ResponseBody
+    String getNews(@RequestParam(name = "type", required = false) String type,
+                   @RequestParam(name = "count", required = false) Integer count){
+        List<News> newsList = newsService.findAllsorted();
+        if(Objects.nonNull(type)){
+            return TemplateNews(newsList.subList(0,3 > newsList.size()? newsList.size() : 3),3);
+        }
+        if(Objects.nonNull(count)){
+            int start = count > newsList.size() ? newsList.size() : count;
+            int last = start + 3 > newsList.size() ? newsList.size() : start + 3;
+            return TemplateNews(newsList.subList(start,last),last);
+        }
+        return "";
+    }
+
+    private String TemplateNews(List<News> newsList, int count) {
+        String news = "";
+        for (News onenews: newsList
+                ) {
+            news+="<div class=\"panel-body\">\n" +
+                    "                    <h3>"+onenews.getName()+"</h3>\n" +
+                    "                    <p style=\"font-size: 14px;\">"+onenews.getContent()+"</p>\n" +
+                    "                    <a class=\"pull-right\" href=\""+(onenews.getLink()==null ? "" : onenews.getLink())+"\">More</a>\n" +
+                    "                    <span>"+onenews.getDate()+"</span>"+
+                    "                    <hr/>\n" +
+                    "                </div>\n";
+        }
+        return news+"<div class='next'><a href=\"\\newsload?count="+ count +"\"'>next</a></div>\n";
+    }
+
+    @GetMapping(value = "/403")
+    public String accessDenied(Model model, Principal user) {
+
+        if (Objects.nonNull(user)) {
+            model.addAttribute("msg", "Hi " + user.getName()
+                    + ", you do not have permission to access this page!");
+        } else {
+            model.addAttribute("msg",
+                    "You do not have permission to access this page!");
+        }
+        return "403";
     }
 }

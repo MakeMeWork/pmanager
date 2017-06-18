@@ -5,7 +5,7 @@ import com.itransition.pmanager.model.News;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,17 +34,15 @@ public class NewsService {
         }else{ newsDao.save(news);}
     }
     public List<News> findAllsorted(){
-        return  newsDao.findAll();
-    }
-    public List<News> findFiveNews(){
         List<News> news = newsDao.findAll();
-        List<News> rnews = new ArrayList<News>();
-        for (int i = 0; (i < 5)&(i<news.size()); i++){
-            if (Objects.nonNull(news.get(i))){
-                rnews.add(news.get(i));
-            }else{break;}
-        }
-        return rnews;
+        news.sort(new Comparator<News>() {
+            @Override
+            public int compare(News o1, News o2) {
+                return  o2.getDate().compareTo(o1.getDate());
+            }
+        });
+        return  news;
     }
+
 
 }

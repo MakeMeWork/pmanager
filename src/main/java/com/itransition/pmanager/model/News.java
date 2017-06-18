@@ -2,6 +2,7 @@ package com.itransition.pmanager.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,10 +22,10 @@ public class News {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String name;
+    @Type(type = "text")
     private String content;
     private String link;
     private Date date;
-
 
     public News(){
         date = new Date();

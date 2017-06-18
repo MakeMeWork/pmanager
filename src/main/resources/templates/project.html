@@ -9,9 +9,10 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title th:text="${project.name}"></title>
     <!-- Bootstrap -->
-    <link href="../css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="../css/bootstrap-theme.min.css" rel="stylesheet"/>
-    <link href="../sticky-footer-navbar.css" rel="stylesheet"/>
+    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/css/bootstrap-theme.min.css" rel="stylesheet"/>
+    <link href="/sticky-footer-navbar.css" rel="stylesheet"/>
+    <link href="/dashboard.css" rel="stylesheet"/>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -19,7 +20,7 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <script src="../js/script.js"></script>
+
 </head>
 
 <body>
@@ -77,12 +78,61 @@
         </div><!--/.navbar-collapse -->
     </div>
 </div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header alert-danger">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Delete</h4>
+            </div>
+            <div class="modal-body">
+                Delete project?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <a role="button" href="@{'/project/'+${project.name}+'/delete'}" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myTag" tabindex="-1" role="dialog" aria-labelledby="myTagLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myTagLabel">New tag</h4>
+            </div>
+            <form method="post" action="#" th:action="@{'/project/'+${project.name}+'/newtag'}">
+            <div class="modal-body">
+                    <label for="tag">Write new tag</label>
+                    <input type="text" class="form-control" id="tag" name="tag" placeholder="Tag"/>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-default">Add</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
 <div class="container">
     <div class="row">
         <div th:if="${msg}" th:text="${msg}" class="alert alert-warning fade in">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
         </div>
         <div class="col-md-8 jumbotron">
+            <div sec:authorize="!isAuthenticated()">
+                <h3 th:text="${project.name}" style="display: inline-block;"> </h3><span class="text-muted pull-right" th:text="${project.state}"></span>
+                <p th:text="${project.description}"></p>
+                <p>
+                 <span th:each="tag : ${project.tags}">
+                    <a th:text="${tag.name}" th:href="@{'/search?tag='+${tag.name}}" role="button" class="btn-info btn-sm"></a>
+                 </span>
+                </p>
+            </div>
+            <div th:if="${project.messages.size()} > 0">
+
+            </div>
             <div sec:authorize="isAuthenticated()">
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#home" data-toggle="tab">Project</a></li>
@@ -95,18 +145,18 @@
                 <!-- Tab panes -->
                 <div class="tab-content">
                     <div class="tab-pane active" id="home">
-                        <h3 id="prName" th:text="${project.name}"></h3>
+                        <h3 id="prName" th:text="${project.name}" style="display: inline-block;"></h3>
+                        <span class="text-muted pull-right" th:text="${project.state}"></span>
                         <p th:text="${project.description}" id="description" contenteditable="false"></p>
                         <button sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" id="changeBtn" class="btn btn-link pull-right" onclick="makeEditable('description','changeBtn')">
                             Change
                         </button>
                         <br/>
                         <p>
-                        <span th:each="tag : ${project.tags}" class="btn-group">
-                            <a  th:text="${tag.name}" th:href="@{'/search?tag='+${tag.name}}" role="button" class="btn btn-info btn-xs"></a>
-                            <a th:href="@{'/project/'+${project.name}+'/delete?tag=' + ${tag.name}}" role="button" class="btn btn-info btn-xs" aria-hidden="true">&times;</a>
-
-                        </span>
+                            <span th:each="tag : ${project.tags}" class="btn-group">
+                                <a  th:text="${tag.name}" th:href="@{'/search?tag='+${tag.name}}" role="button" class="btn btn-info btn-xs"></a>
+                                <a th:href="@{'/project/'+${project.name}+'/delete?tag=' + ${tag.name}}" role="button" class="btn btn-info btn-xs" aria-hidden="true">&times;</a>
+                            </span>
                         </p>
                     </div>
                     <div class="tab-pane" id="dev">
@@ -133,14 +183,14 @@
                             </tr>
                             </tbody>
                             <tfoot sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-                                <form action="#" th:action="@{'/project/'+${project.name}+'/add'}" method="post">
-                                    <div class="input-group">
-                                        <input class="form-control" type="text" id="username" name="username" placeholder="Add developer by username"/>
-                                        <span class="input-group-btn">
+                            <form action="#" th:action="@{'/project/'+${project.name}+'/add'}" method="post">
+                                <div class="input-group">
+                                    <input class="form-control" type="text" id="username" name="username" placeholder="Add developer by username"/>
+                                    <span class="input-group-btn">
                                             <button type="submit" class="btn btn-default"> Add </button>
                                         </span>
-                                    </div>
-                                </form>
+                                </div>
+                            </form>
                             </tfoot>
                         </table>
                     </div>
@@ -151,20 +201,22 @@
                             <tr>
                                 <th>Filename</th>
                                 <th>Link</th>
-                                <th sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')"></th>
+                                <th width="20%">Date upload</th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr th:each="source : ${project.sources}">
                                 <td th:text="${source.name}"></td>
                                 <td th:text="${source.link}"></td>
-                                <td sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-                                    <a th:href="@{'/project/'+${project.name}+'/delete?src=' + ${source.name}}" role="button" class="close" aria-hidden="true">&times;</a>
+                                <td th:text="${source.date}"></td>
+                                <td>
+                                    <a th:if="${project.state == open}" th:href="@{'/project/'+${project.name}+'/delete?src=' + ${source.name}}" role="button" class="close" aria-hidden="true">&times;</a>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
-                        <form enctype="multipart/form-data" method="post">
+                        <form th:if="${project.state == open}" enctype="multipart/form-data" method="post">
                             <div class="form-group">
                                 <label for="file">Add new file</label>
                                 <input type="file" id="file" name="file"/>
@@ -179,20 +231,18 @@
                             <tr>
                                 <th>Filename</th>
                                 <th>Link</th>
-                                <th sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')"></th>
+                                <th width="20%">Date upload</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr th:each="source : ${project.sources}">
                                 <td th:text="${source.name}"></td>
                                 <td th:text="${source.link}"></td>
-                                <td sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-                                    <a th:href="@{'/project/'+${project.name}+'/delete?src=' + ${source.name}}" role="button" class="close" aria-hidden="true">&times;</a>
-                                </td>
+                                <td th:text="${source.date}"></td>
                             </tr>
                             </tbody>
                         </table>
-                        <form enctype="multipart/form-data" method="post">
+                        <form th:if="${project.state == open}" enctype="multipart/form-data" method="post">
                             <div class="form-group">
                                 <label for="file">Add new file</label>
                                 <input type="file" id="file" name="file"/>
@@ -203,66 +253,53 @@
                     <div  sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" class="tab-pane" id="wiki">
                         <h4>Wiki</h4>
                         <div class="row">
-                            <div class="col-md-10" th:text="${project.wikiCompile()}">
-
+                            <div id="wikiarea" class="col-md-10"  th:utext="${project.wikiCompile()}">
+                            </div>
+                            <div class="col-md-2">
+                                <button th:if="${project.state.getState()} == Open" id="changeWiki" class="btn btn-link pull-left" onclick="getWiki()">Change</button>
                             </div>
                         </div>
                     </div>
                     <div  th:if="${permit}" class="tab-pane" id="wiki">
                         <h4>Wiki</h4>
                         <div class="row">
-                            <div class="col-md-10" th:text="${project.wikiCompile()}">
-
+                            <div id="wikiarea" class="col-md-10" th:text="${project.wikiCompile()}">
+                            </div>
+                            <div class="col-md-2">
+                                <button th:if="${project.state} == Open" id="changeWiki" class="btn btn-link pull-left" onclick="getWiki()">Change</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <button sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" class="btn btn-danger pull-right" data-toggle="modal" data-target="#myModal">
+                <div  class="btn-toolbar" role="toolbar">
+                <div class="btn-group pull-right">
+                    <a th:if="${project.state.getState()} == Open" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" class="btn btn-default" role="button" th:href="@{'/project/'+${project.name}+'/archive'}">
+                        Make project archive
+                    </a>
+
+                    <a th:if="${project.state.getState()} == Archive" role="button" th:href="@{'/project/'+${project.name}+'/open'}" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" class="btn btn-default">
+                        Make project active
+                    </a>
+                    <button sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" class="btn btn-danger pull-right" data-toggle="modal" data-target="#myModal">
                     Delete project
                 </button>
-                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header alert-danger">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                <h4 class="modal-title" id="myModalLabel">Delete</h4>
-                            </div>
-                            <div class="modal-body">
-                                Delete project?
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                <a role="button" href="@{'/project/'+${project.name}+'/delete'}" class="btn btn-danger">Delete</a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-            </div>
-            <div sec:authorize="!isAuthenticated()">
-                <h3 th:text="${project.name}"></h3>
-                <p th:text="${project.description}"></p>
-                <p>
-                 <span th:each="tag : ${project.tags}">
-                    <a th:text="${tag.name}" th:href="@{'/search?tag='+${tag.name}}" role="button" class="btn-info btn-sm"></a>
-                 </span>
-                </p>
-            </div>
-            <div th:if="${project.messages.size()} > 0">
-
+                <span></span>
+                <button sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" class="btn btn-default pull-left" data-toggle="modal" data-target="#myTag">
+                    Add new tag
+                </button>
+                </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div sec:authorize="!isAuthenticated()">
-                <h2>Last project Updates</h2>
-                <p>Test name project</p>
-                <p>Test description project</p>
-                <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-            </div>
-            <div sec:authorize="isAuthenticated()">
-                <h2>My projects</h2>
-                <p>Test name project</p>
-                <p>Test description project</p>
-                <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+            <div>
+                <div class="panel panel-default" th:each="project : ${projects}">
+                    <div class="panel-heading" th:text="${project.name}"></div>
+                    <div class="panel-body"  style="font-size: 14px;">
+                        <p th:text="${project.description}"></p>
+                        <a role="button" class="btn btn-link pull-right"  th:href="@{'/project/'+${project.name}}">Go to project</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -278,6 +315,6 @@
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
-
+<script src="/js/script.js"></script>
 </body>
 </html>

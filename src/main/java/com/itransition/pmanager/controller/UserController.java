@@ -2,6 +2,7 @@ package com.itransition.pmanager.controller;
 
 import com.itransition.pmanager.model.SignupValidator;
 import com.itransition.pmanager.model.User;
+import com.itransition.pmanager.service.ProjectService;
 import com.itransition.pmanager.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
@@ -38,17 +39,15 @@ public class UserController {
 
     private final UserService userService;
 
+    @Autowired
+    private ProjectService projectService;
+
     @RequestMapping(value = "/img/{userId}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<byte[]> downloadUserAvatarImage(@PathVariable String userId) throws IOException {
         File file = new File(servletContext.getResourceAsStream("/null")+"/"+userId+".jpg");
-
-
-
-
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_PNG);
-
         return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.CREATED);
     }
 
@@ -65,8 +64,9 @@ public class UserController {
     @GetMapping("/{username}")
     public String getProfile(Model model, @PathVariable String username,Principal user){
         if(Objects.nonNull(user)){
-            model.addAttribute("me", userService.findOne(user.getName()));
-        }
+            getAtrributes(user, model);
+        }else
+            model.addAttribute("projects", projectService.findFiveProjects());
         User fUser = userService.findOne(username);
         if(Objects.nonNull(fUser)){
         model.addAttribute("user", userService.findOne(username));
@@ -75,12 +75,21 @@ public class UserController {
         return "redirect:../profile";
     }
 
+    private void getAtrributes(Principal user, Model model) {
+        model.addAttribute("me", userService.findOne(user.getName()));
+        if(userService.findOne(user.getName()).getRole().getLabel().equals("Developer")){
+            model.addAttribute("projects", projectService.findFiveProjects(userService.findOne(user.getName()).getProjects()));
+        }else{
+            model.addAttribute("projects", projectService.findFiveProjects());
+        }
+    }
     @GetMapping("/{username}/settings")
     @PreAuthorize("(#username == authentication.name) or hasRole('ROLE_ADMIN')")
     public String setProfile(Model model, @PathVariable("username") String username,Principal me){
         if(Objects.nonNull(me)){
-            model.addAttribute("me", userService.findOne(me.getName()));
-        }
+            getAtrributes(me, model);
+        }else
+            model.addAttribute("projects", projectService.findFiveProjects());
         model.addAttribute("user", userService.findOne(username));
         return "setProfile";
     }

@@ -18,6 +18,7 @@ public class ProjectManagerApplication {
 		factory.setMaxRequestSize("10MB");
 		return factory.createMultipartConfig();
 	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(ProjectManagerApplication.class, args);
 	}

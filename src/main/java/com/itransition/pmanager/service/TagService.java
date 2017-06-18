@@ -56,7 +56,6 @@ public class TagService {
         news.sort(new Comparator<Tag>() {
             @Override
             public int compare(Tag o1, Tag o2) {
-
                 return  o2.getPopularity() > o1.getPopularity() ? 1 : o2.getPopularity() < o1.getPopularity() ? -1 : 0;
             }
         });
